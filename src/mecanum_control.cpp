@@ -10,9 +10,22 @@
 #include <rclcpp/rclcpp.hpp>
 
 constexpr int MECANUNM_DIA = 0.152;
+constexpr double ROBOT_CENTER_TO_WHEEL_DISTANCE = 0.3; // ロボットの重心からメカナムホイールまでの距離
 
 void moveChassis(double _xrpm, double _yrpm, double _yaw) {
     /// TODO:制御式落とし込んでsendSpeed()する
+    double speed_abs = sqrt(pow(_xrpm, 2) + pow(_yrpm, 2));
+    double radwimps = atan2(_yrpm, _xrpm);
+
+    double wheel1_rpm = ((speed_abs * sin(radwimps)) + (speed_abs * cos(radwimps)) + (2*sqrt(2)*_yaw*ROBOT_CENTER_TO_WHEEL_DISTANCE)) / 4 * M_PI * MECANUNM_DIA;
+    double wheel2_rpm = ((speed_abs * sin(radwimps)) - (speed_abs * cos(radwimps)) - (2*sqrt(2)*_yaw*ROBOT_CENTER_TO_WHEEL_DISTANCE)) / 4 * M_PI * MECANUNM_DIA;
+    double wheel3_rpm = ((speed_abs * sin(radwimps)) + (speed_abs * cos(radwimps)) - (2*sqrt(2)*_yaw*ROBOT_CENTER_TO_WHEEL_DISTANCE)) / 4 * M_PI * MECANUNM_DIA;
+    double wheel4_rpm = ((speed_abs * sin(radwimps)) - (speed_abs * cos(radwimps)) + (2*sqrt(2)*_yaw*ROBOT_CENTER_TO_WHEEL_DISTANCE)) / 4 * M_PI * MECANUNM_DIA;
+
+    MotorLib::md.sendSpeed(0x00, NULL, wheel1_rpm >= 0 ? true : false, abs(wheel1_rpm), 180, 1000, 5000);
+    MotorLib::md.sendSpeed(0x01, NULL, wheel2_rpm >= 0 ? true : false, abs(wheel2_rpm), 180, 1000, 5000);
+    MotorLib::md.sendSpeed(0x02, NULL, wheel3_rpm >= 0 ? true : false, abs(wheel3_rpm), 180, 1000, 5000);
+    MotorLib::md.sendSpeed(0x03, NULL, wheel4_rpm >= 0 ? true : false, abs(wheel4_rpm), 180, 1000, 5000);
 }
 
 void MecanunmControl::_topic_callback(

@@ -4,13 +4,13 @@
 #include <array>
 #include <cmath>
 #include <geometry_msgs/msg/twist.hpp>
-#include <iostream>
+#include <cstdio>
 #include <motor_lib/motor_lib.hpp>
 #include <rclcpp/qos.hpp>
 #include <rclcpp/rclcpp.hpp>
 
-constexpr int MECANUNM_DIA = 0.152;
-constexpr double ROBOT_CENTER_TO_WHEEL_DISTANCE = 0.3; // ロボットの重心からメカナムホイールまでの距離
+constexpr double MECANUNM_DIA = 0.152;
+constexpr double ROBOT_CENTER_TO_WHEEL_DISTANCE = 0.37; // ロボットの重心からメカナムホイールまでの距離
 
 void moveChassis(double _xrpm, double _yrpm, double _yaw) {
     /// TODO:制御式落とし込んでsendSpeed()する
@@ -22,10 +22,12 @@ void moveChassis(double _xrpm, double _yrpm, double _yaw) {
     double wheel3_rpm = ((speed_abs * sin(radwimps)) + (speed_abs * cos(radwimps)) - (2*sqrt(2)*_yaw*ROBOT_CENTER_TO_WHEEL_DISTANCE)) / 4 * M_PI * MECANUNM_DIA;
     double wheel4_rpm = ((speed_abs * sin(radwimps)) - (speed_abs * cos(radwimps)) + (2*sqrt(2)*_yaw*ROBOT_CENTER_TO_WHEEL_DISTANCE)) / 4 * M_PI * MECANUNM_DIA;
 
-    MotorLib::md.sendSpeed(0x00, NULL, wheel1_rpm >= 0 ? true : false, abs(wheel1_rpm), 180, 1000, 5000);
-    MotorLib::md.sendSpeed(0x01, NULL, wheel2_rpm >= 0 ? true : false, abs(wheel2_rpm), 180, 1000, 5000);
-    MotorLib::md.sendSpeed(0x02, NULL, wheel3_rpm >= 0 ? true : false, abs(wheel3_rpm), 180, 1000, 5000);
-    MotorLib::md.sendSpeed(0x03, NULL, wheel4_rpm >= 0 ? true : false, abs(wheel4_rpm), 180, 1000, 5000);
+    printf("wheel1: %lf, wheel2: %lf, wheel3: %lf, wheel4: %lf\n", wheel1_rpm, wheel2_rpm, wheel3_rpm, wheel4_rpm);
+
+    MotorLib::md.sendPwm(0x00, NULL, wheel1_rpm >= 0 ? true : false, abs(wheel1_rpm), 5000);
+    MotorLib::md.sendPwm(0x01, NULL, wheel2_rpm >= 0 ? true : false, abs(wheel2_rpm), 5000);
+    MotorLib::md.sendPwm(0x02, NULL, wheel3_rpm >= 0 ? false : true, abs(wheel3_rpm), 5000);
+    MotorLib::md.sendPwm(0x03, NULL, wheel4_rpm >= 0 ? true : false, abs(wheel4_rpm), 5000);
 }
 
 void MecanunmControl::_topic_callback(
@@ -33,6 +35,7 @@ void MecanunmControl::_topic_callback(
     double xrpm = msg->linear.x / (2 * M_PI * MECANUNM_DIA) * 60;
     double yrpm = msg->linear.y / (2 * M_PI * MECANUNM_DIA) * 60;
     double yaw = msg->angular.z;
+    RCLCPP_INFO(this->get_logger(), "xrpm: %lf, yrpm: %lf, yaw: %lf\n", xrpm, yrpm, yaw);
     moveChassis(xrpm, yrpm, yaw);
 }
 

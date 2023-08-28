@@ -28,17 +28,17 @@ void MecanunmControl::_moveChassis(double _xrpm, double _yrpm, double _yaw) {
     double speed_abs = sqrt(pow(_xrpm, 2) + pow(_yrpm, 2));
     double radwimps = atan2(_yrpm, _xrpm);
 
-    double wheel1_rpm = _xrpm - _yrpm - (WHEEL_SEPARATION_WIDTH + WHEEL_SEPARATION_LENGTH) * _yaw;
-    double wheel2_rpm = _xrpm + _yrpm + (WHEEL_SEPARATION_WIDTH + WHEEL_SEPARATION_LENGTH) * _yaw;
-    double wheel3_rpm = _xrpm + _yrpm - (WHEEL_SEPARATION_WIDTH + WHEEL_SEPARATION_LENGTH) + _yaw;
-    double wheel4_rpm = _xrpm - _yrpm + (WHEEL_SEPARATION_WIDTH + WHEEL_SEPARATION_LENGTH) + _yaw;
+    int wheel1_rpm = _xrpm - _yrpm - (WHEEL_SEPARATION_WIDTH + WHEEL_SEPARATION_LENGTH) * _yaw;
+    int wheel2_rpm = _xrpm + _yrpm + (WHEEL_SEPARATION_WIDTH + WHEEL_SEPARATION_LENGTH) * _yaw;
+    int wheel3_rpm = _xrpm + _yrpm - (WHEEL_SEPARATION_WIDTH + WHEEL_SEPARATION_LENGTH) + _yaw;
+    int wheel4_rpm = _xrpm - _yrpm + (WHEEL_SEPARATION_WIDTH + WHEEL_SEPARATION_LENGTH) + _yaw;
 
     printf("wheel1: %lf, wheel2: %lf, wheel3: %lf, wheel4: %lf\n", wheel1_rpm, wheel2_rpm, wheel3_rpm, wheel4_rpm);
 
-    _sendPwm(0x00, NULL, wheel1_rpm >= 0 ? true : false, abs(wheel1_rpm));
-    _sendPwm(0x01, NULL, wheel2_rpm >= 0 ? true : false, abs(wheel2_rpm));
-    _sendPwm(0x02, NULL, wheel3_rpm >= 0 ? true : false, abs(wheel3_rpm));
-    _sendPwm(0x03, NULL, wheel4_rpm >= 0 ? true : false, abs(wheel4_rpm));
+    _sendPwm(0x00, NULL, wheel1_rpm >= 0 ? true : false, std::clamp(abs(wheel1_rpm), 0, 999));
+    _sendPwm(0x01, NULL, wheel2_rpm >= 0 ? true : false, std::clamp(abs(wheel2_rpm), 0, 999));
+    _sendPwm(0x02, NULL, wheel3_rpm >= 0 ? true : false, std::clamp(abs(wheel3_rpm), 0, 999));
+    _sendPwm(0x03, NULL, wheel4_rpm >= 0 ? true : false, std::clamp(abs(wheel4_rpm), 0, 999));
 }
 
 void MecanunmControl::_topic_callback(

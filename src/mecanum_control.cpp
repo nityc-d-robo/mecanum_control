@@ -45,7 +45,7 @@ void MecanunmControl::_topic_callback(
     double xrpm = msg->linear.x / (2 * M_PI * MECANUNM_DIA) * 60;
     double yrpm = msg->linear.y / (2 * M_PI * MECANUNM_DIA) * 60;
     double yaw = msg->angular.z;
-    RCLCPP_INFO(this->get_logger(), "xrpm: %lf, yrpm: %lf, yaw: %lf\n", xrpm, yrpm, yaw);
+    //RCLCPP_INFO(this->get_logger(), "xrpm: %lf, yrpm: %lf, yaw: %lf\n", xrpm, yrpm, yaw);
     _moveChassis(xrpm, yrpm, yaw);
 }
 

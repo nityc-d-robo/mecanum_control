@@ -32,7 +32,7 @@ void MecanunmControl::_moveChassis(double _xrpm, double _yrpm, double _yaw) {
     int wheel3_rpm = ((speed_abs * sin(radwimps)) + (speed_abs * cos(radwimps)) - (2*sqrt(2)*_yaw*ROBOT_CENTER_TO_WHEEL_DISTANCE)) / 4 * M_PI * MECANUNM_DIA;
     int wheel4_rpm = ((speed_abs * sin(radwimps)) - (speed_abs * cos(radwimps)) + (2*sqrt(2)*_yaw*ROBOT_CENTER_TO_WHEEL_DISTANCE)) / 4 * M_PI * MECANUNM_DIA;
     
-    RCLCPP_INFO(this->get_logger(), "wheel1: %lf, wheel2: %lf, wheel3: %lf, wheel4: %lf\n", wheel1_rpm, wheel2_rpm, wheel3_rpm, wheel4_rpm);
+    //RCLCPP_INFO(this->get_logger(), "wheel1: %lf, wheel2: %lf, wheel3: %lf, wheel4: %lf\n", wheel1_rpm, wheel2_rpm, wheel3_rpm, wheel4_rpm);
 
     _sendPwm(0x00, NULL, wheel1_rpm >= 0 ? false : true, std::clamp(abs(wheel1_rpm), 0, 999));
     _sendPwm(0x01, NULL, wheel2_rpm >= 0 ? true : false, std::clamp(abs(wheel2_rpm), 0, 999));

@@ -22,7 +22,7 @@ void MecanunmControl::_sendPwm(uint8_t _address, uint8_t _semi_id, bool _phase, 
     _publisher->publish(*msg);
 }
 
-void MecanunmControl::_moveChassis(double _xrpm, double _yrpm, double _yaw) {
+void MecanunmControl::_moveChassis(double _yrpm, double _xrpm, double _yaw) {
     /// TODO:制御式落とし込んでsendSpeed()する
     double speed_abs = sqrt(pow(_xrpm, 2) + pow(_yrpm, 2));
     double radwimps = atan2(_yrpm, _xrpm);
@@ -42,11 +42,11 @@ void MecanunmControl::_moveChassis(double _xrpm, double _yrpm, double _yaw) {
 
 void MecanunmControl::_topic_callback(
     const geometry_msgs::msg::Twist::SharedPtr msg) {
-    double xrpm = msg->linear.x / (2 * M_PI * MECANUNM_DIA) * 60;
-    double yrpm = msg->linear.y / (2 * M_PI * MECANUNM_DIA) * 60;
+    double yrpm = msg->linear.x / (2 * M_PI * MECANUNM_DIA) * 60;
+    double xrpm = msg->linear.y / (2 * M_PI * MECANUNM_DIA) * 60;
     double yaw = msg->angular.z;
     //RCLCPP_INFO(this->get_logger(), "xrpm: %lf, yrpm: %lf, yaw: %lf\n", xrpm, yrpm, yaw);
-    _moveChassis(xrpm, yrpm, yaw);
+    _moveChassis(yrpm, -xrpm, -yaw);
 }
 
 MecanunmControl::MecanunmControl(const rclcpp::NodeOptions &options)

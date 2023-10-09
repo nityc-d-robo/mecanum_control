@@ -57,7 +57,7 @@ MecanunmControl::MecanunmControl(const std::string &name_space,
     : Node("mecanum_control", name_space, options) {
     _publisher = this->create_publisher<drobo_interfaces::msg::MdLibMsg>("md_driver_topic", rclcpp::QoS(10));
     _subscription = this->create_subscription<geometry_msgs::msg::Twist>(
-        "cmd_vel", rclcpp::QoS(10),
+        "cmd_vel/robocon_2023", rclcpp::QoS(10),
         std::bind(&MecanunmControl::_topic_callback, this,
                   std::placeholders::_1));
 }

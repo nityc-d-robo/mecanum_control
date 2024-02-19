@@ -1,0 +1,17 @@
+[package]
+name = "mecanum_control"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[dependencies]
+safe_drive = "0.2"
+drobo_interfaces = { path = "/tmp/daniels_test/drobo_interfaces" }
+
+
+[package.metadata.ros]
+msg = ["drobo_interfaces"]
+msg_dir = "/tmp/daniels_test/"
+safe_drive_version = "0.2"
